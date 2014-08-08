@@ -18,6 +18,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -200,7 +201,6 @@ func (inst *MgoInstance) run() error {
 		"--noprealloc",
 		"--smallfiles",
 		"--nohttpinterface",
-		"--nounixsocket",
 		"--oplogSize", "10",
 		"--keyFile", filepath.Join(inst.dir, "keyfile"),
 		"--ipv6",
@@ -208,6 +208,11 @@ func (inst *MgoInstance) run() error {
 	if !inst.EnableJournal {
 		mgoargs = append(mgoargs, "--nojournal")
 	}
+
+	if runtime.GOOS != "windows" {
+		mgoargs = append(mgoargs, "--nounixsocket")
+	}
+
 	if inst.certs != nil {
 		mgoargs = append(mgoargs,
 			"--sslOnNormalPorts",
