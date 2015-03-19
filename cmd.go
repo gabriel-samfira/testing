@@ -178,7 +178,12 @@ func AssertEchoArgs(c *gc.C, execName string, args ...string) {
 	// Read in entire argument log file
 	content, err := ioutil.ReadFile(execName + ".out")
 	c.Assert(err, gc.IsNil)
-	lines := strings.Split(string(content), "\n")
+
+	lineSeparator := "\n"
+	if runtime.GOOS == "windows" {
+		lineSeparator = "\r\n"
+	}
+	lines := strings.Split(string(content), lineSeparator)
 
 	// Create expected output string
 	expected := execName
